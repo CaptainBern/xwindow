@@ -204,15 +204,16 @@ void setup_signals() {
 }
 
 void xwindow_run(xcb_connection_t* conn, xwindow_options_t* options) {
-    xwindow_xatoms_t xatoms;
     char* wm_name;
     xcb_window_t root_window;
     xcb_window_t active_window;
 
     // Get the NetWM atoms
-    xatoms.NET_ACTIVE_WINDOW = xwindow_get_atom(conn, "_NET_ACTIVE_WINDOW");
-    xatoms.NET_WM_NAME = xwindow_get_atom(conn, "_NET_WM_NAME");
-    xatoms.UTF8_STRING = xwindow_get_atom(conn, "UTF8_STRING");
+    xwindow_xatoms_t xatoms = {
+        .NET_ACTIVE_WINDOW = xwindow_get_atom(conn, "_NET_ACTIVE_WINDOW"),
+        .NET_WM_NAME = xwindow_get_atom(conn, "_NET_WM_NAME"),
+        .UTF8_STRING = xwindow_get_atom(conn, "UTF8_STRING"),
+    };
 
     wm_name = malloc(options->max_title_length + options->suffix_length + 1);
 
