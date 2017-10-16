@@ -12,10 +12,7 @@
 #define VERSION "0.1"
 
 #define DEFAULT_MAX_TITLE_LENGTH 60
-#define DEFAULT_MAX_TITLE_LENGTH_S "60"
-
 #define DEFAULT_SUFFIX "…"
-#define DEFAULT_SUFFIX_LENGTH 3
 
 enum xwindow_mode {
     SINGLE,
@@ -39,7 +36,8 @@ typedef struct xwindow_xatoms {
 volatile sig_atomic_t stop = 0;
 
 void help(const char* arg0) {
-    fprintf(stderr,
+    fprintf(
+        stderr,
         "%s:\n"
         "Usage: xwindow [OPTION]\n"
         "  -f, --follow                follow active window changes; every time\n"
@@ -50,10 +48,10 @@ void help(const char* arg0) {
         "                                will be appended to it; this does not include\n"
         "                                the length of the suffix, so the maximum length\n"
         "                                of the output will be NUM + length(SUFFIX)\n"
-        "                                the default max title length is " DEFAULT_MAX_TITLE_LENGTH_S "\n"
+        "                                the default max title length is %d\n"
         "  -s, --suffix=SUFFIX         the suffix to append to the title in case it\n"
         "                                exceeds the maximum title length;\n"
-        "                                the default suffix is '" DEFAULT_SUFFIX "'\n"
+        "                                the default suffix is '%s'\n"
         "  -i, --ignore-empty-title    never print empty window titles\n"
         "      --help                  display this help and exit\n"
         "      --version               display version information and exit\n"
@@ -66,7 +64,8 @@ void help(const char* arg0) {
         "\n"
         "When no options are provided, xwindow will just print out the title of the\n"
         "current active window and exit (will output and empty line if there is no\n"
-        "active window, unless --ignore-empty-title is provided).\n", arg0, arg0
+        "active window, unless --ignore-empty-title is provided).\n", 
+        arg0, DEFAULT_MAX_TITLE_LENGTH, DEFAULT_SUFFIX, arg0
     );
 
     exit(EXIT_FAILURE);
@@ -290,7 +289,7 @@ int main(int argc, char* argv[]) {
         .mode = SINGLE,
         .max_title_length = DEFAULT_MAX_TITLE_LENGTH,
         .suffix = DEFAULT_SUFFIX,
-        .suffix_length = DEFAULT_SUFFIX_LENGTH,
+        .suffix_length = strlen(DEFAULT_SUFFIX),
         .ignore_empty_title = false,
     };
 
