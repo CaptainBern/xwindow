@@ -14,20 +14,20 @@
 #define DEFAULT_MAX_TITLE_LENGTH 60
 #define DEFAULT_SUFFIX "…"
 
-enum xwindow_mode {
+typedef enum {
     SINGLE,
     FOLLOW
-};
+} xwindow_mode_t;
 
-typedef struct xwindow_options {
-    enum xwindow_mode mode;
+typedef struct {
+    xwindow_mode_t mode;
     size_t max_title_length;
     char* suffix;
     size_t suffix_length;
     bool ignore_empty_title;
 } xwindow_options_t;
 
-typedef struct xwindow_xatoms {
+typedef struct {
     xcb_atom_t NET_ACTIVE_WINDOW;
     xcb_atom_t NET_WM_NAME;
     xcb_atom_t UTF8_STRING;
