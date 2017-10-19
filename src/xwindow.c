@@ -14,24 +14,24 @@
 #define DEFAULT_MAX_TITLE_LENGTH 60
 #define DEFAULT_SUFFIX "…"
 
-typedef enum {
+enum xwindow_mode {
     SINGLE,
     FOLLOW
-} xwindow_mode_t;
+};
 
-typedef struct {
-    xwindow_mode_t mode;
+struct xwindow_options {
+    enum xwindow_mode mode;
     size_t max_title_length;
     char* suffix;
     size_t suffix_length;
     bool ignore_empty_title;
-} xwindow_options_t;
+};
 
-typedef struct {
+struct xwindow_xatoms {
     xcb_atom_t NET_ACTIVE_WINDOW;
     xcb_atom_t NET_WM_NAME;
     xcb_atom_t UTF8_STRING;
-} xwindow_xatoms_t;
+};
 
 volatile sig_atomic_t stop = 0;
 
@@ -105,7 +105,7 @@ xcb_atom_t xwindow_get_atom(xcb_connection_t* conn, char* name) {
     return atom;
 }
 
-xcb_window_t xwindow_get_active_window(xcb_connection_t* conn, xcb_window_t root_window, xwindow_xatoms_t* xatoms) {
+xcb_window_t xwindow_get_active_window(xcb_connection_t* conn, xcb_window_t root_window, struct xwindow_xatoms* xatoms) {
     xcb_window_t active_window = XCB_WINDOW_NONE;
     xcb_get_property_reply_t* reply;
 
@@ -131,7 +131,7 @@ xcb_window_t xwindow_get_active_window(xcb_connection_t* conn, xcb_window_t root
     return active_window;
 }
 
-void xwindow_get_wm_name(xcb_connection_t* conn, xcb_window_t window, xwindow_xatoms_t* xatoms, char* wm_name, xwindow_options_t* options) {
+void xwindow_get_wm_name(xcb_connection_t* conn, xcb_window_t window, struct xwindow_xatoms* xatoms, char* wm_name, struct xwindow_options* options) {
     xcb_get_property_reply_t* wm_name_reply;
 
     wm_name_reply = xcb_get_property_reply(
@@ -202,13 +202,13 @@ void setup_signals() {
     sigaction(SIGINT, &action, NULL);
 }
 
-void xwindow_run(xcb_connection_t* conn, xwindow_options_t* options) {
+void xwindow_run(xcb_connection_t* conn, struct xwindow_options* options) {
     char* wm_name;
     xcb_window_t root_window;
     xcb_window_t active_window;
 
     // Get the NetWM atoms
-    xwindow_xatoms_t xatoms = {
+    struct xwindow_xatoms xatoms = {
         .NET_ACTIVE_WINDOW = xwindow_get_atom(conn, "_NET_ACTIVE_WINDOW"),
         .NET_WM_NAME = xwindow_get_atom(conn, "_NET_WM_NAME"),
         .UTF8_STRING = xwindow_get_atom(conn, "UTF8_STRING"),
@@ -285,12 +285,12 @@ void xwindow_run(xcb_connection_t* conn, xwindow_options_t* options) {
 
 int main(int argc, char* argv[]) {
     xcb_connection_t* conn;
-    xwindow_options_t options = {
+    struct xwindow_options options = {
         .mode = SINGLE,
         .max_title_length = DEFAULT_MAX_TITLE_LENGTH,
         .suffix = DEFAULT_SUFFIX,
         .suffix_length = strlen(DEFAULT_SUFFIX),
-        .ignore_empty_title = false,
+        .ignore_empty_title = false
     };
 
     static const struct option long_options[] = {
